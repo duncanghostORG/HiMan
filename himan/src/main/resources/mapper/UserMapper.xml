@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ww.user">
+
+	<select id="getAllUser" parameterType="java.util.List"
+		resultMap="UserMap">
+		select ID_,
+		REV_,
+		FIRST_,
+		LAST_,
+		EMAIL_,
+		PWD_,
+		PICTURE_ID_ from
+		act_id_user
+	</select>
+
+<select id="getAllGroup" parameterType="java.util.List"
+		resultMap="GroupMap">
+		select ID_,
+		REV_,
+		NAME_,
+		TYPE_ 
+		from
+		act_id_group
+	</select>
+	
+	
+
+	<insert id="saveuser" parameterType="User">
+		insert into act_id_user set
+		ID_=#{id},
+		REV_=#{rev},
+		FIRST_=#{firstname},
+		LAST_=#{lastname},
+		EMAIL_=#{email},
+		PWD_=#{pwd}
+	</insert>
+	
+	
+	<insert id="savegroup" parameterType="Group">
+		insert into act_id_group set
+		ID_=#{id},
+		NAME_=#{name},
+		TYPE_=#{type}
+	  
+	</insert>
+	
+	<insert id="saveRelation" parameterType="java.util.Map">
+		insert into act_id_membership set
+		USER_ID_=#{userid},
+		GROUP_ID_=#{groupid}
+	</insert>
+	
+
+</mapper> 

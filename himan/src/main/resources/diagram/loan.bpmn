@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="loanProcess" name="loan Process" isExecutable="true">
+    <startEvent id="startevent1" name="Start">
+      <extensionElements>
+        <activiti:formProperty id="name" name="name" type="string" variable="name" required="true"></activiti:formProperty>
+        <activiti:formProperty id="emailAddress" name="Email Address" type="string" variable="emailAddress" required="true"></activiti:formProperty>
+        <activiti:formProperty id="income" name="Income" type="long" variable="income" required="true"></activiti:formProperty>
+        <activiti:formProperty id="loanAmount" name="Loan amount" type="long" variable="loanAmount" required="true"></activiti:formProperty>
+      </extensionElements>
+    </startEvent>
+    <scriptTask id="checkCredit" name="Check credit" scriptFormat="groovy" activiti:autoStoreVariables="true">
+      <script>
+               out:println "Checking credit for "+name;
+				creditCheckOk = false;
+				if((income/2)&gt;loanAmount){
+				creditCheckOk =true;
+				}
+				out:println "Checked credit for" +name +"outcome is "+creditCheckOk ;
+			 </script>
+    </scriptTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="checkCredit"></sequenceFlow>
+    <serviceTask id="createApplication" name="Create application" activiti:class="com.ww.flow.services.CreateApplicationTask"></serviceTask>
+    <sequenceFlow id="flow2" sourceRef="checkCredit" targetRef="createApplication"></sequenceFlow>
+    <userTask id="evaluateLoanRequest" name="Evaluate loan request" activiti:exclusive="false" activiti:assignee="fozzie">
+      <extensionElements>
+        <activiti:formProperty id="customerName" name="Customer name" type="string" expression="${loanApplication.customerName}" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="income" name="Income of customer" type="string" expression="${loanApplication.income}" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="requestAmount" name="Requested loan amount" expression="${loanApplication.requestedAmount}" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="creditCheckOk" name="Outcome of credit check" expression="${loanApplication.creditCheckOk}" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="requestApproved" name="Do you approve the request ?" type="enum" required="true">
+          <activiti:value id="true" name="Yes"></activiti:value>
+          <activiti:value id="false" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="explanation" name="Explanation"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow3" sourceRef="createApplication" targetRef="evaluateLoanRequest"></sequenceFlow>
+    <boundaryEvent id="escalateTimer" name="escalateTimer" attachedToRef="evaluateLoanRequest" cancelActivity="true">
+      <timerEventDefinition>
+        <timeDuration>PT1M</timeDuration>
+      </timerEventDefinition>
+    </boundaryEvent>
+    <userTask id="evaluateRequestByManager" name="Evaluate request by manager" activiti:candidateGroups="management"></userTask>
+    <sequenceFlow id="flow5" sourceRef="escalateTimer" targetRef="evaluateRequestByManager"></sequenceFlow>
+    <exclusiveGateway id="approvalGateway" name="Approval Gateway"></exclusiveGateway>
+    <sequenceFlow id="flow7" sourceRef="evaluateLoanRequest" targetRef="approvalGateway"></sequenceFlow>
+    <sequenceFlow id="flow8" sourceRef="evaluateRequestByManager" targetRef="approvalGateway"></sequenceFlow>
+    <serviceTask id="informCustomer" name="Inform Customer Of Denial" activiti:class="com.ww.flow.services.InformCustomerService">
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:expression>${loanApplication.emailAddress}</activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="noApproved" name="not approved" sourceRef="approvalGateway" targetRef="informCustomer">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${requestApproved == false}]]></conditionExpression>
+    </sequenceFlow>
+    <userTask id="processRequest" name="Process request"></userTask>
+    <sequenceFlow id="approved" name="Approved" sourceRef="approvalGateway" targetRef="processRequest">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${requestApproved == true}]]></conditionExpression>
+    </sequenceFlow>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow11" sourceRef="informCustomer" targetRef="endevent1"></sequenceFlow>
+    <sequenceFlow id="flow12" sourceRef="processRequest" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_loanProcess">
+    <bpmndi:BPMNPlane bpmnElement="loanProcess" id="BPMNPlane_loanProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="60.0" y="260.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checkCredit" id="BPMNShape_checkCredit">
+        <omgdc:Bounds height="55.0" width="105.0" x="140.0" y="250.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="createApplication" id="BPMNShape_createApplication">
+        <omgdc:Bounds height="55.0" width="105.0" x="300.0" y="250.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="evaluateLoanRequest" id="BPMNShape_evaluateLoanRequest">
+        <omgdc:Bounds height="55.0" width="105.0" x="460.0" y="250.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="evaluateRequestByManager" id="BPMNShape_evaluateRequestByManager">
+        <omgdc:Bounds height="55.0" width="105.0" x="460.0" y="110.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="escalateTimer" id="BPMNShape_escalateTimer">
+        <omgdc:Bounds height="30.0" width="30.0" x="498.0" y="231.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="870.0" y="226.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="processRequest" id="BPMNShape_processRequest">
+        <omgdc:Bounds height="55.0" width="105.0" x="760.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="approvalGateway" id="BPMNShape_approvalGateway">
+        <omgdc:Bounds height="40.0" width="40.0" x="660.0" y="257.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="informCustomer" id="BPMNShape_informCustomer">
+        <omgdc:Bounds height="55.0" width="105.0" x="750.0" y="88.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="95.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="140.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="245.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="300.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="405.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="460.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="513.0" y="231.0"></omgdi:waypoint>
+        <omgdi:waypoint x="512.0" y="165.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="565.0" y="277.0"></omgdi:waypoint>
+        <omgdi:waypoint x="660.0" y="277.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="565.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="651.0" y="137.0"></omgdi:waypoint>
+        <omgdi:waypoint x="651.0" y="199.0"></omgdi:waypoint>
+        <omgdi:waypoint x="651.0" y="242.0"></omgdi:waypoint>
+        <omgdi:waypoint x="680.0" y="257.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow11" id="BPMNEdge_flow11">
+        <omgdi:waypoint x="855.0" y="115.0"></omgdi:waypoint>
+        <omgdi:waypoint x="887.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="887.0" y="226.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow12" id="BPMNEdge_flow12">
+        <omgdi:waypoint x="865.0" y="357.0"></omgdi:waypoint>
+        <omgdi:waypoint x="887.0" y="354.0"></omgdi:waypoint>
+        <omgdi:waypoint x="887.0" y="261.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="noApproved" id="BPMNEdge_noApproved">
+        <omgdi:waypoint x="680.0" y="257.0"></omgdi:waypoint>
+        <omgdi:waypoint x="680.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="750.0" y="115.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="64.0" x="10.0" y="0.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="approved" id="BPMNEdge_approved">
+        <omgdi:waypoint x="680.0" y="297.0"></omgdi:waypoint>
+        <omgdi:waypoint x="680.0" y="361.0"></omgdi:waypoint>
+        <omgdi:waypoint x="760.0" y="357.0"></omgdi:waypoint>
+        <bpmndi:BPMNLabel>
+          <omgdc:Bounds height="14.0" width="48.0" x="10.0" y="0.0"></omgdc:Bounds>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

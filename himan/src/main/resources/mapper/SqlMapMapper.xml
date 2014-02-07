@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ww">
+	<resultMap type="User" id="UserMap">
+		<result property="id" column="id_" />
+		<result property="rev" column="rev_" />
+		<result property="first" column="first_" />
+		<result property="last" column="last_" />
+		<result property="email" column="email_" />
+		<result property="pwd" column="pwd_" />
+		<result property="pictureid" column="picture_id_" />
+	</resultMap>
+
+	<resultMap type="Group" id="GroupMap">
+		<result property="id" column="id_" />
+		<result property="rev" column="rev_" />
+		<result property="name" column="name_" />
+		<result property="type" column="type_" />
+	</resultMap>
+</mapper>
