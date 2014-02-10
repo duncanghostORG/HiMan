@@ -72,3 +72,8 @@ CREATE TABLE test.s_resource_role(
 ENGINE=InnoDB 
 DEFAULT CHARSET=utf8 
 COLLATE=utf8_general_ci;
+
+
+
+
+

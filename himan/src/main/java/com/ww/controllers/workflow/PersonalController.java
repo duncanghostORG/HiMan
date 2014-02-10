@@ -24,8 +24,9 @@ public class PersonalController {
 	private TaskService taskService;
 	 
 	
-	@RequestMapping(value = "sec/login", method = RequestMethod.GET)
+	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public ModelAndView login() {
+		LOG.info("access login in");
 		ModelAndView mav = new ModelAndView();
 		User user = new User();
 		mav.addObject("user", user);
@@ -33,10 +34,10 @@ public class PersonalController {
 		return mav;
 	}
 
-	@RequestMapping(value = "sec/login", method = RequestMethod.POST)
+	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public ModelAndView handleLogin(HttpServletRequest request) {
-		String name = request.getParameter("id");
-		String pwd = request.getParameter("pwd");
+		String name = request.getParameter("name");
+		String pwd = request.getParameter("password");
 		LOG.info(name + " login in");
 		 
 		List<Task> tasklist = taskService.createTaskQuery().processDefinitionKey(getprocess()).taskAssignee(name).orderByTaskCreateTime().asc().list();
@@ -54,7 +55,11 @@ public class PersonalController {
 		return ma;
 
 	}
+	@RequestMapping(value = "/logout", method = RequestMethod.GET)
+	public String logout() {
 
+		return "sec/logout";
+	}
 	private String getprocess() {
 		// TODO Auto-generated method stub
 		return null;

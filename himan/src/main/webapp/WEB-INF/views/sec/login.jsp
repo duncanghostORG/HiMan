@@ -15,11 +15,11 @@
  <tbody>
   <tr>
    <td>Name</td>
-   <td><form:input path="id"/></td>
+   <td><form:input path="name"/></td>
   </tr>
     <tr>
    <td>PWD</td>
-   <td><form:password path="pwd"/></td>
+   <td><form:password path="password"/></td>
   </tr>
   <tr><td></td><td><input type="submit" value="OK"/></td></tr>
  </tbody>

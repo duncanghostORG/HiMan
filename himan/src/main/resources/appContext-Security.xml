@@ -5,14 +5,143 @@
 	http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/security
 http://www.springframework.org/schema/security/spring-security-3.1.xsd">
-	<http auto-config="true">
-		<intercept-url pattern="/*" access="ROLE_USER" />
-	</http>
-	<authentication-manager alias="authenticationManager">
-		<authentication-provider>
-			<user-service>
-				<user authorities="ROLE_USER" name="guest" password="guest" />
-			</user-service>
+
+	<authentication-manager alias="authenticationManagerBean">
+		<authentication-provider ref="authenticationProvider">
+
 		</authentication-provider>
 	</authentication-manager>
+
+	<beans:bean id="authenticationProvider"
+		class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<beans:property name="userDetailsService" ref="userDetailsService"></beans:property>
+		<beans:property name="hideUserNotFoundExceptions"
+			value="false"></beans:property>
+		<beans:property name="passwordEncoder" ref="passwordEncoder"></beans:property>
+	</beans:bean>
+	<!-- 加密的加盐处理，当然存储的密码也是加盐了，加盐后的被加密串格式：password{salt} 。 -->
+
+	<beans:bean id="userDetailsService"
+		class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+		<beans:property name="dataSource" ref="dataSource" />
+		<beans:property name="usersByUsernameQuery"
+			value="SELECT account, name, password, enable FROM s_user WHERE account=? AND enable=1;" />
+		<beans:property name="authoritiesByUsernameQuery"
+			value="SELECT u.account, u.name, r.name  FROM s_user u, s_role r, s_user_role ur WHERE u.account=? AND u.id = ur.user_id AND ur.role_id = r.id;" />
+	</beans:bean>
+
+
+	<!-- 用户的密码加密方式 -->
+	<beans:bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
+		<beans:constructor-arg index="0" value="256" />
+		<beans:property name="encodeHashAsBase64" value="true" />
+	</beans:bean>
+
+	<!-- ******************授权流程中安全资源加载器和决策器的配置 ********************* -->
+
+	<!-- 访问决策器，决定某个用户（具有的角色）是否有足够的权限去访问某个资源 -->
+	<beans:bean id="accessDecisionManagerBean" class="com.ww.security.MyAccessDecisionManager">
+		<!-- 没有显式定义的资源都保护起来。该属性默认值为false -->
+		<beans:property name="allowIfAllAbstainDecisions"
+			value="false" />
+	</beans:bean>
+
+	<!-- 安全资源定义，即定义某一安全资源可以被哪些角色访问 -->
+	<beans:bean id="securityMetadataSourceBean"
+		class="com.ww.security.MyInvocationSecurityMetadataSource">
+		<beans:constructor-arg index="0" ref="commonDao" />
+		<beans:property name="rejectPublicInvocations" value="true" />
+	</beans:bean>
+
+	<!-- ******************指定过滤器，作为验证和授权的自定义处理入口 ********************* -->
+
+	<!-- 一个自定义的filter，必须包含authenticationManager,accessDecisionManager,securityMetadataSource三个属性 -->
+	<beans:bean id="myFilter" class="com.ww.security.MyFilterSecurityInterceptor">
+		<beans:property name="authenticationManager" ref="authenticationManagerBean" />
+		<beans:property name="accessDecisionManager" ref="accessDecisionManagerBean" />
+		<beans:property name="securityMetadataSource" ref="securityMetadataSourceBean" />
+	</beans:bean>
+
+	<!-- ******************同时增加异常处理配置，针对验证过程中的异常记性处理 ****************** -->
+
+	<!-- 认证异常处理 -->
+	<beans:bean id="exceptionMappingAuthenticationFailureHandler"
+		class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler">
+		<beans:property name="exceptionMappings">
+			<beans:map>
+				<!-- 用户不存在 -->
+				<beans:entry
+					key="org.springframework.security.core.userdetails.UsernameNotFoundException"
+					value="/login?sign=No User" />
+				<!-- 凭证错误(密码不正确) -->
+				<beans:entry
+					key="org.springframework.security.authentication.BadCredentialsException"
+					value="/login?sign=Bad Credentials" />
+				<!-- 用户不可用 -->
+				<beans:entry
+					key="org.springframework.security.authentication.DisabledException"
+					value="/login?sign=User is disabled" />
+				<!-- 登陆凭证错误 -->
+				<beans:entry
+					key="org.springframework.security.core.AuthenticationException"
+					value="/login?sign=Authentication Failure" />
+			</beans:map>
+		</beans:property>
+	</beans:bean>
+
+	<!-- 当访问被拒绝时，会转到403.jsp -->
+	<http auto-config="true" use-expressions="true"
+		access-denied-page="/powermiss.jsp">
+		<!-- 登陆设置 -->
+		<form-login login-page="/sec/login.jsp"
+			authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler" />
+
+		<!-- 登出设置 -->
+		<logout logout-success-url="/login" logout-url="/logout" />
+	
+		<!-- 不要过滤图片等静态资源，其中**代表可以跨越目录，*不可以跨越目录。 -->
+		<intercept-url pattern="/**/*.jpg" access="permitAll" />
+		<intercept-url pattern="/**/*.png" access="permitAll" />
+		<intercept-url pattern="/**/*.gif" access="permitAll" />
+		<intercept-url pattern="/**/*.css" access="permitAll" />
+		<intercept-url pattern="/**/*.js" access="permitAll" />
+		<intercept-url pattern="/login" access="permitAll" />
+		<intercept-url pattern="/*" access="isAuthorized" />
+	    <!-- 增加一个filter，位于FILTER_SECURITY_INTERCEPTOR之前 -->
+		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="myFilter" />
+	</http>
+
+
+	<!-- 安全资源白名单(URL) -->
+	<beans:bean id="securityMetadataSourceTrustListHolder"
+		class="com.ww.security.util.SecurityMetadataSourceTrustListHolder">
+		<beans:property name="trustList">
+			<beans:list>
+
+				<beans:value>/hello</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<!-- 安全用户白名单 -->
+	<beans:bean id="securityUserTrustListHolder"
+		class="com.ww.security.util.SecurityUserTrustListHolder">
+		<beans:property name="trustList">
+			<beans:list>
+				<beans:value>administrator</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+
+	<!-- 开启Spring Security3认证和授权日志 -->
+	<beans:bean
+		class="org.springframework.security.authentication.event.LoggerListener" />
+	<beans:bean class="org.springframework.security.access.event.LoggerListener" />
+
+
+	<beans:bean id="commonDao" class="com.ww.dao.CommonDao"></beans:bean>
+
+
 </beans:beans>

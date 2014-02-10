@@ -1,6 +1,5 @@
 package com.ww.controllers.workflow;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,11 +21,7 @@ public class UserController {
 	@Autowired
 	private UserServices userservice;
 
-	@RequestMapping("/")
-	public String index() {
-		System.out.println("hahah");
-		return "";
-	}
+ 
 
 	@RequestMapping(value = "user/add", method = RequestMethod.GET)
 	public ModelAndView showUserAdd(HttpServletRequest request) {
@@ -61,7 +56,6 @@ public class UserController {
 	@ModelAttribute("groupmap")
 	public List<Group> getGroups() {
 		List<Group> listgroup = userservice.getAllGroups();
-	 
 
 		return listgroup;
 	}

@@ -14,4 +14,17 @@ public class Default {
 		LOG.info("Start app");
 		return "index";
 	}
+
+ 
+	
+	@RequestMapping(value = "/error", method = RequestMethod.GET)
+	public String error() {
+		return "error";
+	}
+	
+	@RequestMapping(value = "/timeout", method = RequestMethod.GET)
+	public String timeout() {
+		return "timeout";
+	}
+	
 }

@@ -74,5 +74,7 @@
 	<context:component-scan base-package="com.ww.controllers" />
 	<context:component-scan base-package="com.ww.services" />
 	<context:component-scan base-package="com.ww.dao" />
+	<context:component-scan base-package="com.ww.security" />
+	
 
 </beans:beans>

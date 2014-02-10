@@ -2,11 +2,13 @@ package com.ww.pojo;
 
 public class User {
 	private String id;
+	private String name;
+	
 	private String rev;
 	private String firstname;
 	private String lastname;
 	private String email;
-	private String pwd;
+	private String password;
 	private String pictureid;
 	private String group;
 	
@@ -48,18 +50,27 @@ public class User {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getPwd() {
-		return pwd;
-	}
-	public void setPwd(String pwd) {
-		this.pwd = pwd;
-	}
+	 
 	public String getPictureid() {
 		return pictureid;
 	}
 	public void setPictureid(String pictureid) {
 		this.pictureid = pictureid;
 	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	
 	
 	
 }
