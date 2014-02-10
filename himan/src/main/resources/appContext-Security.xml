@@ -106,10 +106,10 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 		<intercept-url pattern="/**/*.gif" access="permitAll" />
 		<intercept-url pattern="/**/*.css" access="permitAll" />
 		<intercept-url pattern="/**/*.js" access="permitAll" />
-		<intercept-url pattern="/login" access="permitAll" />
-		<intercept-url pattern="/*" access="isAuthorized" />
-	    <!-- 增加一个filter，位于FILTER_SECURITY_INTERCEPTOR之前 -->
+		<intercept-url pattern="/login.do" access="permitAll" />
+		 <!-- 增加一个filter，位于FILTER_SECURITY_INTERCEPTOR之前 -->
 		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="myFilter" />
+	   
 	</http>
 
 

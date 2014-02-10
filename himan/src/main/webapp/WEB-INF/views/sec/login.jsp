@@ -9,21 +9,28 @@
 <title>Login</title>
 </head>
 <body>
-<form:form  modelAttribute="user">
-<table>
- 
- <tbody>
-  <tr>
-   <td>Name</td>
-   <td><form:input path="name"/></td>
-  </tr>
-    <tr>
-   <td>PWD</td>
-   <td><form:password path="password"/></td>
-  </tr>
-  <tr><td></td><td><input type="submit" value="OK"/></td></tr>
- </tbody>
-</table>
- </form:form>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>  
+<%  
+String path = request.getContextPath();  
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";  
+%>
+
+ <!-- from的action地址，以及用户名密码的name 。都是spring-security固定的。 -->  
+     <form action="<%=basePath %>j_spring_security_check" method="post">      
+    
+        <p>    
+            <label for="j_username">Username</label> <input id="j_username"    
+                name="j_username" type="text" />    
+        </p>    
+    
+        <p>    
+            <label for="j_password">Password</label> <input id="j_password"    
+                name="j_password" type="password" />    
+        </p>    
+          
+        <input type="submit" value="Login" />    
+    
+    </form>    
+
 </body>
 </html>
