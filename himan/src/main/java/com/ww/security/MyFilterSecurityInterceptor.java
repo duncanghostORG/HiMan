@@ -24,7 +24,7 @@ import com.ww.security.util.SecurityMetadataSourceTrustListHolder;
 import com.ww.security.util.SecurityUserTrustListHolder;
 import com.ww.security.util.SecutiryRequestUtil;
 import com.ww.security.util.SessionUserDetailsUtil;
- 
+
 public class MyFilterSecurityInterceptor extends AbstractSecurityInterceptor implements Filter {
 	private FilterInvocationSecurityMetadataSource securityMetadataSource;
 	private static Logger LOG = Logger.getLogger(MyFilterSecurityInterceptor.class);
@@ -39,12 +39,17 @@ public class MyFilterSecurityInterceptor extends AbstractSecurityInterceptor imp
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		String url = httpRequest.getRequestURI().replaceFirst(httpRequest.getContextPath(), "");
-
+		// String url =
+		// httpRequest.getRequestURI().replaceFirst(httpRequest.getContextPath(),
+		// "");
+		String url = httpRequest.getRequestURI();
 		// 1.1）判断登陆状态：如果未登陆则要求登陆
 		if (!SessionUserDetailsUtil.isLogined()) {
-			httpResponse.sendRedirect(httpRequest.getContextPath() + SecurityConstants.LOGIN_URL);
 			LOG.info("未登陆用户，From IP:" + SecutiryRequestUtil.getRequestIp(httpRequest) + "访问 ：URI" + url);
+			String redirecturl = httpRequest.getContextPath() + SecurityConstants.LOGIN_URL;
+			LOG.info("Redirct to:" + redirecturl);
+			httpResponse.sendRedirect(redirecturl);
+
 			return;
 		}
 
@@ -105,7 +110,7 @@ public class MyFilterSecurityInterceptor extends AbstractSecurityInterceptor imp
 	@Override
 	public Class<? extends Object> getSecureObjectClass() {
 		return FilterInvocation.class;
-		 
+
 	}
 
 }

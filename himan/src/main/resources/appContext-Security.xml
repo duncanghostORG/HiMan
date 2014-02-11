@@ -19,16 +19,17 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 			value="false"></beans:property>
 		<beans:property name="passwordEncoder" ref="passwordEncoder"></beans:property>
 	</beans:bean>
-	<!-- 加密的加盐处理，当然存储的密码也是加盐了，加盐后的被加密串格式：password{salt} 。 -->
+	<!-- 加密的加盐处理，当然存储的密码也是加盐了，加盐后的被加密串格式：password{salt} 。 <beans:bean id="userDetailsService" 
+		class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl"> <beans:property 
+		name="dataSource" ref="dataSource" /> <beans:property name="usersByUsernameQuery" 
+		value="SELECT account, name, password, enable FROM s_user WHERE account=? 
+		AND enable=1;" /> <beans:property name="authoritiesByUsernameQuery" value="SELECT 
+		u.account, u.name, r.name FROM s_user u, s_role r, s_user_role ur WHERE u.account=? 
+		AND u.id = ur.user_id AND ur.role_id = r.id;" /> </beans:bean> -->
+	<beans:bean id="userDetailsService" class="com.ww.dao.SecurityDAO"></beans:bean>
 
-	<beans:bean id="userDetailsService"
-		class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
-		<beans:property name="dataSource" ref="dataSource" />
-		<beans:property name="usersByUsernameQuery"
-			value="SELECT account, name, password, enable FROM s_user WHERE account=? AND enable=1;" />
-		<beans:property name="authoritiesByUsernameQuery"
-			value="SELECT u.account, u.name, r.name  FROM s_user u, s_role r, s_user_role ur WHERE u.account=? AND u.id = ur.user_id AND ur.role_id = r.id;" />
-	</beans:bean>
+
+
 
 
 	<!-- 用户的密码加密方式 -->
@@ -73,43 +74,47 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 				<!-- 用户不存在 -->
 				<beans:entry
 					key="org.springframework.security.core.userdetails.UsernameNotFoundException"
-					value="/login?sign=No User" />
+					value="/login.do?sign=No User" />
 				<!-- 凭证错误(密码不正确) -->
 				<beans:entry
 					key="org.springframework.security.authentication.BadCredentialsException"
-					value="/login?sign=Bad Credentials" />
+					value="/login.do?sign=Bad Credentials" />
 				<!-- 用户不可用 -->
 				<beans:entry
 					key="org.springframework.security.authentication.DisabledException"
-					value="/login?sign=User is disabled" />
+					value="/login.do?sign=User is disabled" />
 				<!-- 登陆凭证错误 -->
 				<beans:entry
 					key="org.springframework.security.core.AuthenticationException"
-					value="/login?sign=Authentication Failure" />
+					value="/login.do?sign=Authentication Failure" />
 			</beans:map>
 		</beans:property>
 	</beans:bean>
 
+	<http pattern="/**/*.jpg" security="none" />
+	<http pattern="/**/*.png" security="none" />
+	<http pattern="/**/*.gif" security="none" />
+	<http pattern="/**/*.css" security="none" />
+	<http pattern="/**/*.js" security="none" />
+	<http pattern="/login.do" security="none" />
+	<http pattern="/logout.do" security="none" />
+	<http pattern="/" security="none" />
+	<http pattern="/user/*.do" security="none" />
+	<http pattern="/role/*.do" security="none" />
+	
 	<!-- 当访问被拒绝时，会转到403.jsp -->
-	<http auto-config="true" use-expressions="true"
-		access-denied-page="/powermiss.jsp">
+	<http use-expressions="true" access-denied-page="/error.do">
 		<!-- 登陆设置 -->
-		<form-login login-page="/sec/login.jsp"
+		<form-login login-page="/login.do"
 			authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler" />
 
 		<!-- 登出设置 -->
-		<logout logout-success-url="/login" logout-url="/logout" />
-	
+		<logout logout-success-url="/login.do" logout-url="/logout.do" />
+
 		<!-- 不要过滤图片等静态资源，其中**代表可以跨越目录，*不可以跨越目录。 -->
-		<intercept-url pattern="/**/*.jpg" access="permitAll" />
-		<intercept-url pattern="/**/*.png" access="permitAll" />
-		<intercept-url pattern="/**/*.gif" access="permitAll" />
-		<intercept-url pattern="/**/*.css" access="permitAll" />
-		<intercept-url pattern="/**/*.js" access="permitAll" />
-		<intercept-url pattern="/login.do" access="permitAll" />
-		 <!-- 增加一个filter，位于FILTER_SECURITY_INTERCEPTOR之前 -->
+		<!-- 增加一个filter，位于FILTER_SECURITY_INTERCEPTOR之前 -->
 		<custom-filter before="FILTER_SECURITY_INTERCEPTOR" ref="myFilter" />
-	   
+
 	</http>
 
 

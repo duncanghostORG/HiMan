@@ -7,8 +7,9 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.ww.pojo.Group;
-import com.ww.pojo.User;
+import com.ww.exceptions.DAOException;
+import com.ww.pojo.SRole;
+import com.ww.pojo.SUser;
 
 @Repository
 public class UserDAO {
@@ -19,29 +20,32 @@ public class UserDAO {
 	private SqlSessionTemplate sqlSessionTemplate;
 
 	@SuppressWarnings("unchecked")
-	public List<User> getAllUsers() {
-		List<User> userlist = (List<User>) sqlSessionTemplate.selectList("ww.user.getAllUser");
+	public List<SUser> getAllUsers() {
+		List<SUser> userlist = (List<SUser>) sqlSessionTemplate.selectList("ww.sec.user.getAllUsers");
 		return userlist;
 	}
 
-	public int save(User user) {
-		int updated = sqlSessionTemplate.insert("ww.user.saveuser", user);
+	public int save(SUser user) {
+		int updated = sqlSessionTemplate.insert("ww.sec.user.saveuser", user);
 		return updated;
 	}
 
-	public int saveGroup(Group group) {
-		int updated = sqlSessionTemplate.insert("ww.user.savegroup", group);
+	public int saveRole(SRole role) {
+		int updated = sqlSessionTemplate.insert("ww.sec.user.saveRole", role);
 		return updated;
 	}
 
-	public List<Group> getAllGroups() {
-		List<Group> glist = (List<Group>) sqlSessionTemplate.selectList("ww.user.getAllGroup");
-		return glist ;
+	public List<SRole> getAllRoles() {
+		List<SRole> glist = (List<SRole>) sqlSessionTemplate.selectList("ww.sec.user.getAllRoles");
+		return glist;
 	}
 
-	public void saveRelation(Map params) {
-		
-		sqlSessionTemplate.insert("ww.user.saveRelation", params);
-		
+	public void saveRelation(Map params) throws DAOException {
+		try {
+			sqlSessionTemplate.insert("ww.sec.user.saveRelation", params);
+		} catch (Exception e) {
+			throw new DAOException(e);
+		}
+
 	}
 }

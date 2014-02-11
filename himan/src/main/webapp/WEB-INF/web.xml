@@ -19,7 +19,7 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet-mapping>
 		<servlet-name>spring-mvc</servlet-name>
 		<url-pattern>*.do</url-pattern>
@@ -55,5 +55,7 @@
 	</listener>
 
 
-
+	<welcome-file-list>
+		<welcome-file>/login.do</welcome-file>
+	</welcome-file-list>
 </web-app>

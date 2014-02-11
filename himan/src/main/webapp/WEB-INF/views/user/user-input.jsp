@@ -18,29 +18,21 @@
 			<tbody>
 				<tr>
 					<td>User ID</td>
-					<td><form:input path="id" /></td>
+					<td><form:input path="account" /></td>
 				</tr>
 				<tr>
-					<td>First Name</td>
-					<td><form:input path="firstname" /></td>
+					<td>User Name</td>
+					<td><form:input path="name" /></td>
 				</tr>
-				<tr>
-					<td>Last Name</td>
-					<td><form:input path="lastname" /></td>
-				</tr>
-				<tr>
+			 	<tr>
 					<td>Password</td>
-					<td><form:password path="pwd" /></td>
-				</tr>
-				<tr>
-					<td>Email</td>
-					<td><form:input path="email" /></td>
+					<td><form:password path="password" /></td>
 				</tr>
 				<tr>
 					<td>Group</td>
-					<td><form:select path="group">
+					<td><form:select path="role">
 							<form:option value="" label="--请选择--" />
-							<form:options items="${groupmap}" itemValue="id"
+							<form:options items="${rolemap}" itemValue="id"
 								itemLabel="name" />
 						</form:select></td>
 				</tr>

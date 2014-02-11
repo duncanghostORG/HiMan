@@ -1,5 +1,6 @@
 package com.ww.security.util;
 
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +16,8 @@ public class SessionUserDetailsUtil {
 		UserDetails userDetails = null;
 		SecurityContext sc = SecurityContextHolder.getContext();
 		Authentication ac = sc.getAuthentication();
-		if (ac != null) {
+		if (ac != null && !(ac instanceof AnonymousAuthenticationToken)) {
+			// userDetails = auth.getPrincipal()
 			userDetails = (UserDetails) ac.getPrincipal();
 		}
 		return userDetails;

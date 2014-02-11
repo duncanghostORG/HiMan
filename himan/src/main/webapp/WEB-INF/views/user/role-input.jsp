@@ -18,17 +18,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>ID</td>
-					<td><form:input path="id" /></td>
-				</tr>
  				<tr>
 					<td>Name</td>
 					<td><form:input path="name" /></td>
-				</tr>
-				<tr>
-					<td>Type</td>
-					<td><form:input path="type" /></td>
 				</tr>
 				<tr>
 					<td></td>
