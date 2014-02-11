@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ww.sec.user">
+
+	<select id="getUserByAccount" parameterType="java.util.Map"
+		resultType="com.ww.pojo.SUser">
+		SELECT account, name, password, enable FROM s_user WHERE
+		account=#{account}
+		AND enable=1
+	</select>
+
+	<select id="getAllUsers" parameterType="java.util.Map"
+		resultType="com.ww.pojo.SUser">
+		SELECT account, name, password, enable FROM s_user WHERE
+		enable=1
+	</select>
+
+
+	<select id="getRolesByUser" parameterType="java.util.Map"
+		resultType="com.ww.pojo.SRole">
+		SELECT r.id, r.name FROM s_role r,s_user u, s_user_role rs
+		WHERE r.id=rs.role_id and u.id=rs.user_id and u.enable=1 and
+		u.account=#{account}
+	</select>
+
+
+
+	<select id="getAllRoles" parameterType="java.util.List"
+		resultType="com.ww.pojo.SRole">
+		select id,
+		name
+		from
+		s_role
+	</select>
+
+	<insert id="saveuser" parameterType="com.ww.pojo.SUser">
+		insert into s_user set
+		account=#{account},
+		name=#{name},
+		enable=#{enable},
+		password=#{password},
+		create_by=#{create_by},
+		updated_by=#{updated_by},
+		reg_date=now(),
+		create_date=now(),
+		updated_date=now()
+		<selectKey resultType="long" keyProperty="id" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<insert id="saveRole" parameterType="com.ww.pojo.SRole">
+		insert into s_role
+		set
+		name=#{name},
+		create_by=#{create_by},
+		updated_by=#{updated_by},
+		create_date=now(),
+		updated_date=now()
+		<selectKey resultType="long" keyProperty="id" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<insert id="saveRelation" parameterType="java.util.Map">
+		insert into
+		s_user_role
+		set
+		user_id=#{userid},
+		role_id=#{roleid},
+		create_by=#{create_by},
+		updated_by=#{updated_by},
+		create_date=now(),
+		updated_date=now()
+	</insert>
+
+
+</mapper> 
