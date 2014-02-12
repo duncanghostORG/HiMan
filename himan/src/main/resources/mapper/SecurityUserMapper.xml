@@ -36,7 +36,8 @@
 	</select>
 
 	<insert id="saveuser" parameterType="com.ww.pojo.SUser">
-		insert into s_user set
+		insert into s_user 
+		set
 		account=#{account},
 		name=#{name},
 		enable=#{enable},
@@ -46,8 +47,8 @@
 		reg_date=now(),
 		create_date=now(),
 		updated_date=now()
-		<selectKey resultType="long" keyProperty="id" order="AFTER">
-			SELECT LAST_INSERT_ID()
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			SELECT LAST_INSERT_ID() 
 		</selectKey>
 	</insert>
 
@@ -59,8 +60,8 @@
 		updated_by=#{updated_by},
 		create_date=now(),
 		updated_date=now()
-		<selectKey resultType="long" keyProperty="id" order="AFTER">
-			SELECT LAST_INSERT_ID()
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			SELECT LAST_INSERT_ID() as id
 		</selectKey>
 	</insert>
 
@@ -68,8 +69,8 @@
 		insert into
 		s_user_role
 		set
-		user_id=#{userid},
-		role_id=#{roleid},
+		user_id=#{user_id},
+		role_id=#{role_id},
 		create_by=#{create_by},
 		updated_by=#{updated_by},
 		create_date=now(),

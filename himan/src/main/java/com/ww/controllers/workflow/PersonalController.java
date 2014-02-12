@@ -10,6 +10,8 @@ import org.activiti.engine.TaskService;
 import org.activiti.engine.task.Task;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,13 +24,16 @@ public class PersonalController {
 	private static final Logger LOG = Logger.getLogger(PersonalController.class);
 	@Autowired
 	private TaskService taskService;
-	 
-	
+
 	@RequestMapping(value = "login", method = RequestMethod.GET)
-	public ModelAndView login() {
+	public ModelAndView login(HttpServletRequest request) {
 		LOG.info("access login in");
 		ModelAndView mav = new ModelAndView();
 		User user = new User();
+		String sign = request.getParameter("sign");
+		if (sign != null) {
+			mav.addObject("sign", "Login Failed:"+sign);
+		}
 		mav.addObject("user", user);
 		mav.setViewName("sec/login");
 		return mav;
@@ -36,30 +41,43 @@ public class PersonalController {
 
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public ModelAndView handleLogin(HttpServletRequest request) {
-		String name = request.getParameter("name");
+		LOG.info("******************login post*************************");
+		String name = request.getParameter("username");
 		String pwd = request.getParameter("password");
 		LOG.info(name + " login in");
-		 
+
 		List<Task> tasklist = taskService.createTaskQuery().processDefinitionKey(getprocess()).taskAssignee(name).orderByTaskCreateTime().asc().list();
 		List<String> tasknamelist = new ArrayList<String>();
 		for (Task t : tasklist) {
 			tasknamelist.add(t.getName());
-			 
+
 		}
 		ModelAndView ma = new ModelAndView();
 		ma.addObject("tasks", tasknamelist);
 		ma.addObject("username", name);
 		ma.addObject("taskno", tasknamelist.size());
-		
-		ma.setViewName("sec/mytasks");
+		 
+		ma.setViewName("home");
 		return ma;
 
 	}
+
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout() {
 
 		return "sec/logout";
 	}
+	
+	@RequestMapping(value = "/home", method = RequestMethod.GET)
+	public ModelAndView home(HttpServletRequest request) {
+		SecurityContext sc = SecurityContextHolder.getContext();
+		String username = sc.getAuthentication().getName();
+		ModelAndView ma = new ModelAndView();
+		ma.addObject("username", username);
+		ma.setViewName("home");
+		return ma;
+	}
+
 	private String getprocess() {
 		// TODO Auto-generated method stub
 		return null;

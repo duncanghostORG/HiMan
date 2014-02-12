@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -44,21 +45,23 @@ public class UserController {
 
 	@RequestMapping(value = "user/add", method = RequestMethod.POST)
 	public String saveUser(@ModelAttribute SUser user, RedirectAttributes redirectAttributes) throws BizException {
-		user.setCreate_by("wang");
-		user.setUpdated_by("wang");
+		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+		user.setCreate_by(name);
+		user.setUpdated_by(name);
 		user.setEnable("1");
 		userservice.saveUser(user);
 		redirectAttributes.addFlashAttribute("message", "Successfully added..");
-		return "redirect:/user/add";
+		return "redirect:/user/add.do";
 	}
 
 	@RequestMapping(value = "role/add", method = RequestMethod.POST)
 	public String saveUser(@ModelAttribute SRole role, RedirectAttributes redirectAttributes) {
-		role.setCreate_by("william");
-		role.setUpdated_by("william");
+		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+		role.setCreate_by(name);
+		role.setUpdated_by(name);
 		userservice.saveRole(role);
 		redirectAttributes.addFlashAttribute("message", "Successfully added..");
-		return "redirect:/role/add";
+		return "redirect:/role/add.do";
 	}
 
 	@ModelAttribute("rolemap")
@@ -83,8 +86,7 @@ public class UserController {
 	@InitBinder
 	public static void registerDoubleFormat(WebDataBinder binder) {
 		binder.registerCustomEditor(Integer.TYPE, new CustomerIntegerEditor());
-		 
-	 
+
 	}
 
 	private static class CustomerIntegerEditor extends PropertyEditorSupport {

@@ -16,21 +16,19 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 %>
 
  <!-- from的action地址，以及用户名密码的name 。都是spring-security固定的。 -->  
-     <form action="<%=basePath %>j_spring_security_check" method="post">      
-    
-        <p>    
-            <label for="j_username">Username</label> <input id="j_username"    
-                name="j_username" type="text" />    
-        </p>    
-    
-        <p>    
-            <label for="j_password">Password</label> <input id="j_password"    
-                name="j_password" type="password" />    
-        </p>    
-          
-        <input type="submit" value="Login" />    
-    
-    </form>    
+     <form action= "j_spring_security_check" method="post" >
+    <label for="j_username"> Login</ label>:
+    <input id="j_username" name= "j_username" size="20" maxlength="50" type= "text"/>
+    <br />
+    <input id="_spring_security_remember_me" name="_spring_security_remember_me" type="checkbox" value="true"/>
+    <label for="_spring_security_remember_me" >Remember Me?</label>
+    <br />
+    <label for="j_password" >Password </label> :
+    <input id="j_password" name= "j_password" size="20" maxlength="50" type= "password"/>
+    <br />
+    <input type="submit" value= "Login"/><br/>
+     <h2>${sign}</h2>
+</form>   
 
 </body>
 </html>

@@ -3,7 +3,7 @@ package com.ww.pojo;
 import java.io.Serializable;
 
 public class SUser implements Serializable {
-	private long id;
+	private int id;
 	private String account;
 	private String name;
 	private String enable;
@@ -30,7 +30,7 @@ public class SUser implements Serializable {
 		this.updated_by = updated_by;
 	}
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -42,7 +42,7 @@ public class SUser implements Serializable {
 		this.role = role;
 	}
 
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -77,5 +77,12 @@ public class SUser implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	@Override
+	public String toString() {
+		return "SUser [id=" + id + ", account=" + account + ", name=" + name + ", enable=" + enable + "]";
+	}
+	
+	
 
 }

@@ -1,12 +1,17 @@
 package com.ww.security.util;
 
+import org.apache.log4j.Logger;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.ww.controllers.workflow.PersonalController;
+
 public class SessionUserDetailsUtil {
+	private static final Logger LOG = Logger.getLogger(SessionUserDetailsUtil.class);
+
 	/**
 	 * 得到当前session中的用户，如果没有返回null
 	 * 
@@ -33,6 +38,7 @@ public class SessionUserDetailsUtil {
 		UserDetails userDetails = getUserDetails();
 		if (userDetails != null) {
 			loginId = userDetails.getUsername();
+			LOG.info("Welcome:" + loginId);
 		}
 		return loginId;
 	}

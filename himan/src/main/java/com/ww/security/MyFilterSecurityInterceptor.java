@@ -1,6 +1,7 @@
 package com.ww.security;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -16,6 +17,9 @@ import org.apache.log4j.Logger;
 import org.springframework.security.access.SecurityMetadataSource;
 import org.springframework.security.access.intercept.AbstractSecurityInterceptor;
 import org.springframework.security.access.intercept.InterceptorStatusToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 
@@ -39,19 +43,16 @@ public class MyFilterSecurityInterceptor extends AbstractSecurityInterceptor imp
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
-		// String url =
-		// httpRequest.getRequestURI().replaceFirst(httpRequest.getContextPath(),
-		// "");
-		String url = httpRequest.getRequestURI();
+		 String url =httpRequest.getRequestURI().replaceFirst(httpRequest.getContextPath(),"");
+		//String url = httpRequest.getRequestURI();
 		// 1.1）判断登陆状态：如果未登陆则要求登陆
+		 LOG.info("未登陆用户，From IP:" + SecutiryRequestUtil.getRequestIp(httpRequest) + "访问 ：URI" + url);
 		if (!SessionUserDetailsUtil.isLogined()) {
-			LOG.info("未登陆用户，From IP:" + SecutiryRequestUtil.getRequestIp(httpRequest) + "访问 ：URI" + url);
 			String redirecturl = httpRequest.getContextPath() + SecurityConstants.LOGIN_URL;
 			LOG.info("Redirct to:" + redirecturl);
 			httpResponse.sendRedirect(redirecturl);
-
 			return;
-		}
+		} 
 
 		// 1.2）过用户白名单：如果为超级管理员，则直接执行
 		if (SecurityUserTrustListHolder.isTrustUser(SessionUserDetailsUtil.getLoginUserName())) {

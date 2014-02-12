@@ -26,18 +26,30 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 		AND enable=1;" /> <beans:property name="authoritiesByUsernameQuery" value="SELECT 
 		u.account, u.name, r.name FROM s_user u, s_role r, s_user_role ur WHERE u.account=? 
 		AND u.id = ur.user_id AND ur.role_id = r.id;" /> </beans:bean> -->
-	<beans:bean id="userDetailsService" class="com.ww.dao.SecurityDAO"></beans:bean>
+	<beans:bean id="userDetailsService" class="com.ww.dao.SecurityDAO">
+		<beans:property name="sqlSessionTemplate" ref="sqlSessionTemplate" />
+	</beans:bean>
 
 
 
+	<!-- 配置密码的盐值 -->
+	<beans:bean id="saltSource"
+		class="org.springframework.security.authentication.dao.ReflectionSaltSource">
+		<!-- 以用户名作为加密盐值 -->
+		<beans:property name="userPropertyToUse" value="username"></beans:property>
+	</beans:bean>
 
 
-	<!-- 用户的密码加密方式 -->
+	<!-- 用户的密码加密方式  
 	<beans:bean id="passwordEncoder"
 		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
 		<beans:constructor-arg index="0" value="256" />
 		<beans:property name="encodeHashAsBase64" value="true" />
 	</beans:bean>
+	 -->
+	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+	
 
 	<!-- ******************授权流程中安全资源加载器和决策器的配置 ********************* -->
 
@@ -99,14 +111,17 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 	<http pattern="/login.do" security="none" />
 	<http pattern="/logout.do" security="none" />
 	<http pattern="/" security="none" />
-	<http pattern="/user/*.do" security="none" />
-	<http pattern="/role/*.do" security="none" />
+
 	
+	
+
 	<!-- 当访问被拒绝时，会转到403.jsp -->
 	<http use-expressions="true" access-denied-page="/error.do">
+	<intercept-url pattern="/login*" access="isAnonymous()" />  
+    <intercept-url pattern="/**" access="isAuthenticated()"/>  
 		<!-- 登陆设置 -->
 		<form-login login-page="/login.do"
-			authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler" />
+			authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler"  default-target-url="/home.do" />
 
 		<!-- 登出设置 -->
 		<logout logout-success-url="/login.do" logout-url="/logout.do" />
@@ -123,8 +138,7 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 		class="com.ww.security.util.SecurityMetadataSourceTrustListHolder">
 		<beans:property name="trustList">
 			<beans:list>
-
-				<beans:value>/hello</beans:value>
+				<beans:value>/</beans:value>
 			</beans:list>
 		</beans:property>
 	</beans:bean>
@@ -144,8 +158,6 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 	<beans:bean
 		class="org.springframework.security.authentication.event.LoggerListener" />
 	<beans:bean class="org.springframework.security.access.event.LoggerListener" />
-
-
 	<beans:bean id="commonDao" class="com.ww.dao.CommonDao"></beans:bean>
 
 

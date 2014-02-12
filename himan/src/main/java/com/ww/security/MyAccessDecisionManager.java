@@ -54,9 +54,7 @@ public class MyAccessDecisionManager implements AccessDecisionManager {
 				}
 			}
 		}
-
 		checkAllowIfAllAbstainDecisions();
-
 	}
 
 	@Override

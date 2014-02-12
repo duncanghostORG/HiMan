@@ -6,11 +6,12 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.dao.SaltSource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ww.controllers.workflow.PersonalController;
 import com.ww.dao.UserDAO;
 import com.ww.exceptions.BizException;
 import com.ww.exceptions.DAOException;
@@ -22,6 +23,11 @@ public class UserServices {
 	private static final Logger LOG = Logger.getLogger(UserServices.class);
 	@Autowired
 	private UserDAO userdao;
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	@Autowired
+	private SaltSource saltSource; 
+	
 
 	public List<SUser> getAllUsers() {
 		return userdao.getAllUsers();
@@ -31,14 +37,17 @@ public class UserServices {
 		return userdao.getAllRoles();
 	}
 
-	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public void saveUser(SUser user) throws BizException {
 		try {
-			int userid = userdao.save(user);
-		
-			int groupid = user.getRole();
-			LOG.info("userid:"+userid+"--Roleid:"+groupid);
 			
+			String encodedPwd = passwordEncoder.encode(user.getPassword());
+			user.setPassword(encodedPwd);
+			userdao.save(user);
+			int userid = user.getId();
+			int groupid = user.getRole();
+			LOG.info("userid:" + userid + "--Roleid:" + groupid);
+
 			Map map = new HashMap();
 			map.put("user_id", userid);
 			map.put("role_id", groupid);
@@ -51,7 +60,9 @@ public class UserServices {
 	}
 
 	public int saveRole(SRole role) {
-		return userdao.saveRole(role);
+		int roleid = userdao.saveRole(role);
+		LOG.info("ROLEID:" + roleid);
+		return roleid;
 
 	}
 
