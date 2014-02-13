@@ -36,7 +36,7 @@
 	</select>
 
 	<insert id="saveuser" parameterType="com.ww.pojo.SUser">
-		insert into s_user 
+		insert into s_user
 		set
 		account=#{account},
 		name=#{name},
@@ -48,7 +48,8 @@
 		create_date=now(),
 		updated_date=now()
 		<selectKey resultType="int" keyProperty="id" order="AFTER">
-			SELECT LAST_INSERT_ID() 
+			SELECT
+			LAST_INSERT_ID()
 		</selectKey>
 	</insert>
 
@@ -61,9 +62,26 @@
 		create_date=now(),
 		updated_date=now()
 		<selectKey resultType="int" keyProperty="id" order="AFTER">
-			SELECT LAST_INSERT_ID() as id
+			SELECT
+			LAST_INSERT_ID() as id
 		</selectKey>
 	</insert>
+
+	<insert id="saveResource" parameterType="com.ww.pojo.SResource">
+		insert into s_resource
+		set
+		name=#{name},
+		url=#{url},
+		create_by=#{create_by},
+		updated_by=#{updated_by},
+		create_date=now(),
+		updated_date=now()
+		<selectKey resultType="int" keyProperty="id" order="AFTER">
+			SELECT
+			LAST_INSERT_ID() as id
+		</selectKey>
+	</insert>
+
 
 	<insert id="saveRelation" parameterType="java.util.Map">
 		insert into
@@ -78,4 +96,14 @@
 	</insert>
 
 
+
+	<insert id="saveResRelation"  parameterType="java.util.List">  
+		insert into s_resource_role (resource_id,role_id,create_by,updated_by,create_date,updated_date)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.resource_id},#{item.role_id},#{item.create_by},#{item.updated_by},now(),now())
+		</foreach>
+
+	</insert>
 </mapper> 

@@ -40,16 +40,13 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 	</beans:bean>
 
 
-	<!-- 用户的密码加密方式  
+	<!-- 用户的密码加密方式 <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder"> 
+		<beans:constructor-arg index="0" value="256" /> <beans:property name="encodeHashAsBase64" 
+		value="true" /> </beans:bean> -->
 	<beans:bean id="passwordEncoder"
-		class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
-		<beans:constructor-arg index="0" value="256" />
-		<beans:property name="encodeHashAsBase64" value="true" />
-	</beans:bean>
-	 -->
-	<beans:bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
-	
+
 
 	<!-- ******************授权流程中安全资源加载器和决策器的配置 ********************* -->
 
@@ -110,18 +107,25 @@ http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 	<http pattern="/**/*.js" security="none" />
 	<http pattern="/login.do" security="none" />
 	<http pattern="/logout.do" security="none" />
+	<http pattern="/role/add.do" security="none" />
+	<http pattern="/user/add.do" security="none" />
+	<http pattern="/rs/add.do" security="none" />
+	<http pattern="/home.do" security="none" />
 	<http pattern="/" security="none" />
 
-	
-	
+
+
 
 	<!-- 当访问被拒绝时，会转到403.jsp -->
 	<http use-expressions="true" access-denied-page="/error.do">
-	<intercept-url pattern="/login*" access="isAnonymous()" />  
-    <intercept-url pattern="/**" access="isAuthenticated()"/>  
+		<intercept-url pattern="/role/add.do*" access="isAnonymous()" />
+		<intercept-url pattern="/login*" access="isAnonymous()" />
+		<intercept-url pattern="/home*" access="isAnonymous()" />
+		<intercept-url pattern="/**" access="isAuthenticated()" />
 		<!-- 登陆设置 -->
 		<form-login login-page="/login.do"
-			authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler"  default-target-url="/home.do" />
+			authentication-failure-handler-ref="exceptionMappingAuthenticationFailureHandler"
+			default-target-url="/home.do" />
 
 		<!-- 登出设置 -->
 		<logout logout-success-url="/login.do" logout-url="/logout.do" />

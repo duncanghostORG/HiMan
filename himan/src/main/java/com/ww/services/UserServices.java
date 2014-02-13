@@ -1,5 +1,6 @@
 package com.ww.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ww.dao.UserDAO;
 import com.ww.exceptions.BizException;
 import com.ww.exceptions.DAOException;
+import com.ww.pojo.ResourceRole;
+import com.ww.pojo.SResource;
 import com.ww.pojo.SRole;
 import com.ww.pojo.SUser;
 
@@ -43,7 +46,7 @@ public class UserServices {
 			
 			String encodedPwd = passwordEncoder.encode(user.getPassword());
 			user.setPassword(encodedPwd);
-			userdao.save(user);
+			userdao.saveUser(user);
 			int userid = user.getId();
 			int groupid = user.getRole();
 			LOG.info("userid:" + userid + "--Roleid:" + groupid);
@@ -64,6 +67,29 @@ public class UserServices {
 		LOG.info("ROLEID:" + roleid);
 		return roleid;
 
+	}
+
+	public void saveResource(SResource rs) throws BizException {
+		try {
+		userdao.saveResource(rs);
+		int rsid = rs.getId();
+		List<Integer> rolelist = rs.getRolelist();
+		
+		List<ResourceRole>list =new ArrayList<ResourceRole>();
+		for(Integer role:rolelist){
+			ResourceRole rr = new ResourceRole();
+			rr.setResource_id(rsid);
+			rr.setRole_id(role);
+			rr.setUpdated_by(rs.getUpdated_by());
+			rr.setCreate_by(rs.getCreate_by());
+		}
+		
+			userdao.saveResRelation(list);
+		} catch (DAOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException(e);
+		}
 	}
 
 }

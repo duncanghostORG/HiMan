@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -18,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ww.exceptions.BizException;
+import com.ww.pojo.SResource;
 import com.ww.pojo.SRole;
 import com.ww.pojo.SUser;
 import com.ww.services.UserServices;
@@ -42,10 +42,21 @@ public class UserController {
 		mav.setViewName("user/role-input");
 		return mav;
 	}
+	
+	@RequestMapping(value = "rs/add", method = RequestMethod.GET)
+	public ModelAndView showResourceAdd(HttpServletRequest request) {
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("resource", new SResource());
+		
+		mav.setViewName("user/rs-input");
+		return mav;
+	}
 
 	@RequestMapping(value = "user/add", method = RequestMethod.POST)
 	public String saveUser(@ModelAttribute SUser user, RedirectAttributes redirectAttributes) throws BizException {
-		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+		// String name =
+		// SecurityContextHolder.getContext().getAuthentication().getName();
+		String name = "admin";
 		user.setCreate_by(name);
 		user.setUpdated_by(name);
 		user.setEnable("1");
@@ -55,13 +66,27 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "role/add", method = RequestMethod.POST)
-	public String saveUser(@ModelAttribute SRole role, RedirectAttributes redirectAttributes) {
-		String name = SecurityContextHolder.getContext().getAuthentication().getName();
+	public String saveRole(@ModelAttribute SRole role, RedirectAttributes redirectAttributes) {
+		// String name =
+		// SecurityContextHolder.getContext().getAuthentication().getName();
+		String name = "admin";
 		role.setCreate_by(name);
 		role.setUpdated_by(name);
 		userservice.saveRole(role);
 		redirectAttributes.addFlashAttribute("message", "Successfully added..");
 		return "redirect:/role/add.do";
+	}
+	
+	@RequestMapping(value = "rs/add", method = RequestMethod.POST)
+	public String saveResource(@ModelAttribute SResource rs, RedirectAttributes redirectAttributes) throws BizException {
+		// String name =
+		// SecurityContextHolder.getContext().getAuthentication().getName();
+		String name = "admin";
+		rs.setCreate_by(name);
+		rs.setUpdated_by(name);
+		userservice.saveResource(rs);
+		redirectAttributes.addFlashAttribute("message", "Successfully added..");
+		return "redirect:/rs/add.do";
 	}
 
 	@ModelAttribute("rolemap")

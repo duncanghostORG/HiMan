@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.ww.exceptions.DAOException;
+import com.ww.pojo.ResourceRole;
+import com.ww.pojo.SResource;
 import com.ww.pojo.SRole;
 import com.ww.pojo.SUser;
 
@@ -25,13 +27,18 @@ public class UserDAO {
 		return userlist;
 	}
 
-	public int save(SUser user) {
+	public int saveUser(SUser user) {
 		int updated = sqlSessionTemplate.insert("ww.sec.user.saveuser", user);
 		return updated;
 	}
 
-	public int saveRole(SRole role) {
+	public int saveRole(SRole role) {  
 		int updated = sqlSessionTemplate.insert("ww.sec.user.saveRole", role);
+		return updated;
+	}
+
+	public int saveResource(SResource rs) {
+		int updated = sqlSessionTemplate.insert("ww.sec.user.saveResource", rs);
 		return updated;
 	}
 
@@ -43,6 +50,15 @@ public class UserDAO {
 	public void saveRelation(Map params) throws DAOException {
 		try {
 			sqlSessionTemplate.insert("ww.sec.user.saveRelation", params);
+		} catch (Exception e) {
+			throw new DAOException(e);
+		}
+
+	}
+	
+	public void saveResRelation(List<ResourceRole>list) throws DAOException {
+		try {
+			sqlSessionTemplate.insert("ww.sec.user.saveResRelation", list);
 		} catch (Exception e) {
 			throw new DAOException(e);
 		}
