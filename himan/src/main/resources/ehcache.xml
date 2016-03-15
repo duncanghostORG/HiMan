@@ -7,47 +7,6 @@
 		overflowToDisk="false" diskPersistent="false" timeToIdleSeconds="0"
 		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
 
-	<cache name="NAO_CACHE_OCCUPATION" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_HOUSEHOLDER" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_ACCOUNTTYPE" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_EMPEROR" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_IDENTITYTYPE" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_TRADINGREASON" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_INVPURPOSE" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_ANNUALINCOME" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_FINASSET" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_PREFECTURE" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_NATIONALITY" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_SEX" eternal="true" maxElementsInMemory="1024"
-		overflowToDisk="false" diskPersistent="false" timeToLiveSeconds="600"
-		memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_TASKSTATUS" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
-	<cache name="NAO_CACHE_KTAKANNADOUBLE" eternal="true"
-		maxElementsInMemory="1024" overflowToDisk="false" diskPersistent="false"
-		timeToLiveSeconds="600" memoryStoreEvictionPolicy="LRU" />
+ 
 
 </ehcache> 
